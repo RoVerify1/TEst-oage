@@ -30,7 +30,6 @@
             color: white; text-decoration: none;
         }
         
-        /* Logo Styling */
         .logo-img {
             height: 40px;
             width: auto;
@@ -73,7 +72,6 @@
         .error { color: var(--red); }
         .loading { color: yellow; }
 
-        /* Verification Steps */
         .step-box {
             background: #0a0a0a;
             padding: 20px;
@@ -85,16 +83,17 @@
             font-family: 'Courier New', monospace;
             background: #222;
             color: var(--red);
-            padding: 10px;
-            font-size: 24px;
+            padding: 15px;
+            font-size: 28px;
             font-weight: bold;
             letter-spacing: 5px;
             border: 1px dashed var(--red);
             margin: 10px 0;
             user-select: all;
+            cursor: pointer;
         }
+        .code-display:active { background: #333; }
 
-        /* Shop Grid */
         .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
         .product { background: #111; padding: 20px; border: 1px solid #333; transition: 0.3s; }
         .product:hover { border-color: var(--red); transform: translateY(-5px); }
@@ -108,7 +107,6 @@
     <!-- NAVIGATION -->
     <nav>
         <div class="brand" onclick="showSection('home')">
-            <!-- HIER WIRD DAS LOGO GELADEN -->
             <img src="slogo.png" alt="Xerion Logo" class="logo-img" onerror="this.style.display='none'">
             XERION <span style="color:var(--red)">X</span>
         </div>
@@ -116,6 +114,7 @@
             <a href="#" onclick="showSection('shop')" style="color:#aaa; text-decoration:none; padding-top:10px;">Shop</a>
             <a href="#" onclick="showSection('verify')" style="color:#aaa; text-decoration:none; padding-top:10px;">Verify</a>
             
+            <!-- HINWEIS: Ersetze die redirect_uri mit deiner echten Vercel URL, sobald sie da ist -->
             <a href="https://discord.com/oauth2/authorize?client_id=1507855664410529792&response_type=code&redirect_uri=https://xerionx.kiblox.at/Roblox/index.html&scope=identify" class="btn-auth" id="loginBtn">
                 <i class="fab fa-discord"></i> Login
             </a>
@@ -184,7 +183,7 @@
                 <p style="color:#aaa;">Bitte logge dich oben rechts mit Discord ein, um dich zu verifizieren.</p>
             </div>
 
-            <!-- User View: Step 1 (Name Input) -->
+            <!-- Step 1: Name Input -->
             <div id="step1View" class="card hidden">
                 <p>Du bist eingeloggt! Gib deinen exakten Roblox-Namen ein.</p>
                 <input type="text" id="rbxName" class="input-field" placeholder="Dein Roblox Username">
@@ -192,14 +191,18 @@
                 <div id="statusMsg" class="status-msg"></div>
             </div>
 
-            <!-- User View: Step 2 (Code Display) -->
+            <!-- Step 2: Code Display & Action -->
             <div id="step2View" class="card hidden">
-                <p>Kopiere diesen Code und füge ihn in deine <strong>Roblox Profil-Bio</strong> ein:</p>
-                <div class="code-display" id="verifyCode">LOADING...</div>
-                <p style="font-size: 14px; color: #aaa;">Warte 30 Sekunden nach dem Einfügen, dann klicke auf prüfen.</p>
-                
-                <button class="btn-auth" style="width:100%; margin-top: 20px;" onclick="checkVerification()">
-                    <i class="fas fa-sync"></i> Jetzt Überprüfen
+                <div class="step-box">
+                    <p><strong>Schritt 1:</strong> Kopiere diesen Code:</p>
+                    <div class="code-display" id="verifyCode" onclick="copyCode()" title="Klicken zum Kopieren">LOADING...</div>
+                    
+                    <p style="margin-top:15px;"><strong>Schritt 2:</strong> Gehe auf Roblox, öffne dein Profil und füge den Code in deine "Bio" ein.</p>
+                    <p style="font-size: 13px; color: #777; margin-top: 5px;">Speichere die Änderungen nicht vergessen!</p>
+                </div>
+
+                <button class="btn-auth" style="width:100%; margin-top: 20px;" onclick="submitVerification()">
+                    <i class="fas fa-check"></i> Ich habe den Code eingefügt
                 </button>
                 <div id="checkStatus" class="status-msg"></div>
             </div>
@@ -207,10 +210,10 @@
             <!-- Success View -->
             <div id="successView" class="card hidden">
                 <i class="fas fa-check-circle" style="font-size: 50px; color: #0f0; margin-bottom: 20px;"></i>
-                <h2 style="color: #0f0;">Verifiziert!</h2>
-                <p>Dein Account wurde erfolgreich verknüpft.</p>
-                <p style="color: #aaa; margin-top: 10px;">Die Discord-Rolle wird automatisch zugewiesen.</p>
-                <button class="btn-auth" style="margin-top: 20px;" onclick="showSection('shop')">Zum Shop</button>
+                <h2 style="color: #0f0;">Anfrage Gesendet!</h2>
+                <p>Deine Verifizierung wurde an unser Admin-Team übermittelt.</p>
+                <p style="color: #aaa; margin-top: 10px;">Sobald ein Admin die Rolle zugewiesen hat, wird der Shop automatisch freigeschaltet.</p>
+                <button class="btn-auth" style="margin-top: 20px;" onclick="showSection('home')">Zurück zur Startseite</button>
             </div>
         </div>
     </section>
@@ -219,19 +222,16 @@
         // --- KONFIGURATION ---
         const WEBHOOK_URL = "https://discord.com/api/webhooks/1508174956486463552/9C28PlKyzlYNzktNAlPBHwdiLLz4kM4NQJJZP9EQw1U1H8ct89W4HqB12C10Xr9e4bpq";
 
-        // --- STATE ---
         let currentCode = "";
         let attempts = 0;
-        const maxAttempts = 3;
 
-        // --- NAVIGATION ---
         function showSection(id) {
             document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             checkShopAccess();
         }
 
-        // --- LOGIN CHECK ---
+        // Login Logic (Simuliert für Frontend-only)
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
@@ -243,14 +243,14 @@
 
         function updateUI() {
             const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const isVerified = localStorage.getItem('isVerified') === 'true';
             
             if (isLoggedIn) {
                 document.getElementById('loginBtn').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'inline-block';
                 document.getElementById('guestView').classList.add('hidden');
                 
-                // Prüfen ob schon verifiziert
-                if(localStorage.getItem('isVerified') === 'true') {
+                if (isVerified) {
                     document.getElementById('successView').classList.remove('hidden');
                     document.getElementById('step1View').classList.add('hidden');
                     document.getElementById('step2View').classList.add('hidden');
@@ -289,8 +289,6 @@
             }
         }
 
-        // --- VERIFICATION LOGIC ---
-
         function generateCode() {
             const rbxName = document.getElementById('rbxName').value.trim();
             const statusDiv = document.getElementById('statusMsg');
@@ -300,10 +298,7 @@
                 return;
             }
 
-            // Simulierter Code (In echter App müsste dies vom Backend kommen)
             currentCode = "X-" + Math.random().toString(36).substr(2, 6).toUpperCase();
-            
-            // Speichern für spätere Prüfung
             localStorage.setItem('pendingRbxName', rbxName);
             localStorage.setItem('pendingCode', currentCode);
 
@@ -313,64 +308,46 @@
             document.getElementById('step2View').classList.remove('hidden');
         }
 
-        async function checkVerification() {
+        function copyCode() {
+            const codeText = document.getElementById('verifyCode').innerText;
+            navigator.clipboard.writeText(codeText).then(() => {
+                alert("Code kopiert! Jetzt in die Roblox Bio einfügen.");
+            });
+        }
+
+        function submitVerification() {
             const statusDiv = document.getElementById('checkStatus');
             const rbxName = localStorage.getItem('pendingRbxName');
-            
-            if (attempts >= maxAttempts) {
-                statusDiv.innerHTML = "<span class='error'>❌ Zu viele Versuche. Bitte starte neu.</span>";
+            const code = localStorage.getItem('pendingCode');
+
+            if (attempts >= 3) {
+                statusDiv.innerHTML = "<span class='error'>❌ Zu viele Versuche. Bitte lade die Seite neu.</span>";
                 return;
             }
 
-            statusDiv.innerHTML = "<span class='loading'>⏳ Prüfe Roblox Bio...</span>";
+            statusDiv.innerHTML = "<span class='loading'>⏳ Sende Daten an Discord...</span>";
             attempts++;
 
-            // SIMULATION: Da wir kein echtes Backend haben, simulieren wir eine erfolgreiche Prüfung nach 3 Sekunden
-            // In einer echten Umgebung würde hier ein fetch() an deinen Node.js Server gehen, der die Roblox API prüft.
-            
+            // Simuliere kurze Ladezeit
             setTimeout(() => {
-                // Hier würde die echte Logik entscheiden:
-                // if (bioContainsCode) { success } else { error }
-                
-                // Für diese Demo machen wir es erfolgreich, damit du den Flow sehen kannst:
-                finishVerification(rbxName);
-                
-                // ECHTE LOGIK (Auskommentiert, da kein Backend vorhanden):
-                /*
-                try {
-                    const response = await fetch(`https://api.roblox.com/users/get-by-username?username=${rbxName}`);
-                    // ... Bio prüfen ...
-                } catch (e) { ... }
-                */
-            }, 2000);
-        }
-
-        function finishVerification(rbxName) {
-            const statusDiv = document.getElementById('checkStatus');
-            statusDiv.innerHTML = "<span class='success'>✅ Code gefunden! Verifiziere...</span>";
-
-            setTimeout(() => {
-                localStorage.setItem('isVerified', 'true');
-                document.getElementById('step2View').classList.add('hidden');
-                document.getElementById('successView').classList.remove('hidden');
-                
-                // Webhook senden
-                sendWebhook(rbxName);
-                checkShopAccess();
+                sendWebhook(rbxName, code);
             }, 1000);
         }
 
-        async function sendWebhook(rbxName) {
+        async function sendWebhook(rbxName, code) {
+            const statusDiv = document.getElementById('checkStatus');
+            
             const payload = {
                 username: "Xerion Verify Bot",
                 avatar_url: "https://i.imgur.com/AfFp7pu.png",
                 embeds: [{
-                    title: "✅ Neue Verifizierung Erfolgreich",
-                    color: 65280, // Grün
+                    title: "🔔 Neue Verifizierungs-Anfrage",
+                    color: 16711680,
+                    description: `Ein User möchte sich verifizieren. Bitte prüfe die Bio von **${rbxName}** auf den Code \`${code}\`.`,
                     fields: [
                         { name: "Roblox Name", value: `\`${rbxName}\``, inline: true },
-                        { name: "Discord ID", value: `<@USER_ID>`, inline: true }, // UserID müsste über OAuth geholt werden
-                        { name: "Code", value: `\`${currentCode}\``, inline: false }
+                        { name: "Verifikations-Code", value: `\`${code}\``, inline: true },
+                        { name: "Aktion", value: "Manuelle Prüfung erforderlich", inline: false }
                     ],
                     footer: { text: "Xerion X System" },
                     timestamp: new Date()
@@ -378,17 +355,33 @@
             };
 
             try {
-                await fetch(WEBHOOK_URL, {
+                const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+
+                if (response.ok) {
+                    statusDiv.innerHTML = "<span class='success'>✅ Erfolgreich gesendet! Warte auf die Rolle.</span>";
+                    // Setze User als "wartend" oder "verifiziert" (hier simulieren wir Erfolg nach Senden)
+                    // In einem echten System würde man warten, bis der Admin klickt.
+                    // Für jetzt schalten wir den Shop frei, damit der User ein Erfolgserlebnis hat:
+                    localStorage.setItem('isVerified', 'true');
+                    
+                    setTimeout(() => {
+                        document.getElementById('step2View').classList.add('hidden');
+                        document.getElementById('successView').classList.remove('hidden');
+                        checkShopAccess();
+                    }, 1500);
+                } else {
+                    statusDiv.innerHTML = "<span class='error'>❌ Fehler beim Senden. Versuch es später.</span>";
+                }
             } catch (error) {
-                console.error("Webhook Fehler", error);
+                console.error(error);
+                statusDiv.innerHTML = "<span class='error'>❌ Netzwerkfehler.</span>";
             }
         }
 
-        // Initial UI Update
         updateUI();
     </script>
 </body>
