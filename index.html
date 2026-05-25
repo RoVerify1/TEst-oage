@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xerion X | Roblox Verification</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --red: #ff1f1f; --bg: #050505; --card: #111; --text-gray: #aaa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: white; 
+            background-image: radial-gradient(circle at 50% 0%, #1a0505 0%, transparent 70%);
+            min-height: 100vh; 
+        }
+
+        /* Navigation */
+        nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 20px 5%; background: rgba(5,5,5,0.95); backdrop-filter: blur(10px);
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid #333; 
+        }
+        
+        .brand { 
+            font-size: 28px; font-weight: 700; display: flex; align-items: center; gap: 12px; 
+            font-family: 'Rajdhani', sans-serif; text-transform: uppercase; cursor: pointer; 
+            color: white; text-decoration: none;
+        }
+        
+        /* Logo Styling */
+        .logo-img {
+            height: 40px;
+            width: auto;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(255, 31, 31, 0.3);
+        }
+
+        .btn-auth { 
+            background: var(--red); color: white; padding: 10px 25px; border: none; 
+            font-weight: 700; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            cursor: pointer; transition: 0.3s; text-decoration: none; display: inline-block;
+        }
+        .btn-auth:hover { background: white; color: var(--red); box-shadow: 0 0 20px var(--red); }
+
+        /* Sections */
+        section { padding: 120px 5% 60px; min-height: 100vh; display: none; animation: fadeIn 0.5s ease; }
+        section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .container { max-width: 800px; margin: 0 auto; text-align: center; }
+        
+        h1 { font-family: 'Rajdhani', sans-serif; font-size: 50px; text-transform: uppercase; margin-bottom: 20px; }
+        h1 span { color: var(--red); text-shadow: 0 0 20px var(--red); }
+        
+        .card { 
+            background: var(--card); padding: 40px; border: 1px solid #333; 
+            border-top: 3px solid var(--red); margin-top: 30px; border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .input-field { 
+            width: 100%; padding: 15px; background: #000; border: 1px solid #333; 
+            color: white; margin-bottom: 20px; outline: none; transition: 0.3s; 
+            font-size: 16px;
+        }
+        .input-field:focus { border-color: var(--red); box-shadow: 0 0 10px rgba(255, 31, 31, 0.2); }
+
+        .status-msg { margin-top: 15px; font-weight: bold; min-height: 24px; }
+        .success { color: #0f0; }
+        .error { color: var(--red); }
+        .loading { color: yellow; }
+
+        /* Verification Steps */
+        .step-box {
+            background: #0a0a0a;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid var(--red);
+            text-align: left;
+        }
+        .code-display {
+            font-family: 'Courier New', monospace;
+            background: #222;
+            color: var(--red);
+            padding: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 5px;
+            border: 1px dashed var(--red);
+            margin: 10px 0;
+            user-select: all;
+        }
+
+        /* Shop Grid */
+        .shop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 40px; }
+        .product { background: #111; padding: 20px; border: 1px solid #333; transition: 0.3s; }
+        .product:hover { border-color: var(--red); transform: translateY(-5px); }
+        .price { color: var(--red); font-weight: bold; font-size: 20px; margin: 10px 0; }
+        
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="brand" onclick="showSection('home')">
+            <!-- HIER WIRD DAS LOGO GELADEN -->
+            <img src="slogo.png" alt="Xerion Logo" class="logo-img" onerror="this.style.display='none'">
+            XERION <span style="color:var(--red)">X</span>
+        </div>
+        <div style="display: flex; gap: 20px; align-items: center;">
+            <a href="#" onclick="showSection('shop')" style="color:#aaa; text-decoration:none; padding-top:10px;">Shop</a>
+            <a href="#" onclick="showSection('verify')" style="color:#aaa; text-decoration:none; padding-top:10px;">Verify</a>
+            
+            <a href="https://discord.com/oauth2/authorize?client_id=1507855664410529792&response_type=code&redirect_uri=https://xerionx.kiblox.at/Roblox/index.html&scope=identify" class="btn-auth" id="loginBtn">
+                <i class="fab fa-discord"></i> Login
+            </a>
+            <button class="btn-auth" id="logoutBtn" style="display:none; background:#333;" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <section id="home" class="active">
+        <div class="container">
+            <h1>Welcome to <br><span>Xerion X</span></h1>
+            <p style="color:var(--text-gray); font-size: 18px; margin-bottom: 40px;">
+                Der beste Marktplatz für Roblox Assets. Verifiziere dich, um Zugriff zu erhalten.
+            </p>
+            <button class="btn-auth" onclick="showSection('verify')">Jetzt Verifizieren</button>
+            
+            <div class="card" style="margin-top: 60px;">
+                <h3><i class="fas fa-shield-alt" style="color:var(--red)"></i> Sicheres System</h3>
+                <p style="color:#777; margin-top:10px;">Automatische Verifikation via Roblox Bio.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SHOP SECTION -->
+    <section id="shop">
+        <div class="container">
+            <h1>Market<span style="color:var(--red)">place</span></h1>
+            
+            <div id="shopLocked" class="card">
+                <i class="fas fa-lock" style="font-size: 40px; color: var(--red); margin-bottom: 20px;"></i>
+                <h3>Zugriff verweigert</h3>
+                <p style="color: #aaa; margin-top: 10px;">Du musst dich erst verifizieren, um den Shop zu sehen.</p>
+                <button class="btn-auth" style="margin-top: 20px;" onclick="showSection('verify')">Zum Verifizieren</button>
+            </div>
+
+            <div id="shopUnlocked" class="shop-grid hidden">
+                <div class="product">
+                    <i class="fas fa-cube" style="font-size:40px; color:#555;"></i>
+                    <h3>Admin Script</h3>
+                    <div class="price">450 R$</div>
+                    <button class="btn-auth" style="width:100%; font-size:12px;">Kaufen</button>
+                </div>
+                <div class="product">
+                    <i class="fas fa-shield-alt" style="font-size:40px; color:#555;"></i>
+                    <h3>Anti-Cheat</h3>
+                    <div class="price">1200 R$</div>
+                    <button class="btn-auth" style="width:100%; font-size:12px;">Kaufen</button>
+                </div>
+                <div class="product">
+                    <i class="fas fa-gem" style="font-size:40px; color:#555;"></i>
+                    <h3>VIP Pass</h3>
+                    <div class="price">250 R$</div>
+                    <button class="btn-auth" style="width:100%; font-size:12px;">Kaufen</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VERIFY SECTION -->
+    <section id="verify">
+        <div class="container">
+            <h1>Roblox <span style="color:var(--red)">Verify</span></h1>
+            
+            <!-- Guest View -->
+            <div id="guestView" class="card">
+                <p style="color:#aaa;">Bitte logge dich oben rechts mit Discord ein, um dich zu verifizieren.</p>
+            </div>
+
+            <!-- User View: Step 1 (Name Input) -->
+            <div id="step1View" class="card hidden">
+                <p>Du bist eingeloggt! Gib deinen exakten Roblox-Namen ein.</p>
+                <input type="text" id="rbxName" class="input-field" placeholder="Dein Roblox Username">
+                <button class="btn-auth" style="width:100%" onclick="generateCode()">Code Generieren</button>
+                <div id="statusMsg" class="status-msg"></div>
+            </div>
+
+            <!-- User View: Step 2 (Code Display) -->
+            <div id="step2View" class="card hidden">
+                <p>Kopiere diesen Code und füge ihn in deine <strong>Roblox Profil-Bio</strong> ein:</p>
+                <div class="code-display" id="verifyCode">LOADING...</div>
+                <p style="font-size: 14px; color: #aaa;">Warte 30 Sekunden nach dem Einfügen, dann klicke auf prüfen.</p>
+                
+                <button class="btn-auth" style="width:100%; margin-top: 20px;" onclick="checkVerification()">
+                    <i class="fas fa-sync"></i> Jetzt Überprüfen
+                </button>
+                <div id="checkStatus" class="status-msg"></div>
+            </div>
+
+            <!-- Success View -->
+            <div id="successView" class="card hidden">
+                <i class="fas fa-check-circle" style="font-size: 50px; color: #0f0; margin-bottom: 20px;"></i>
+                <h2 style="color: #0f0;">Verifiziert!</h2>
+                <p>Dein Account wurde erfolgreich verknüpft.</p>
+                <p style="color: #aaa; margin-top: 10px;">Die Discord-Rolle wird automatisch zugewiesen.</p>
+                <button class="btn-auth" style="margin-top: 20px;" onclick="showSection('shop')">Zum Shop</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // --- KONFIGURATION ---
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1508174956486463552/9C28PlKyzlYNzktNAlPBHwdiLLz4kM4NQJJZP9EQw1U1H8ct89W4HqB12C10Xr9e4bpq";
+
+        // --- STATE ---
+        let currentCode = "";
+        let attempts = 0;
+        const maxAttempts = 3;
+
+        // --- NAVIGATION ---
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            checkShopAccess();
+        }
+
+        // --- LOGIN CHECK ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            localStorage.setItem('isLoggedIn', 'true');
+            window.history.replaceState({}, document.title, window.location.pathname);
+            alert("Erfolgreich mit Discord angemeldet!");
+        }
+
+        function updateUI() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                document.getElementById('loginBtn').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'inline-block';
+                document.getElementById('guestView').classList.add('hidden');
+                
+                // Prüfen ob schon verifiziert
+                if(localStorage.getItem('isVerified') === 'true') {
+                    document.getElementById('successView').classList.remove('hidden');
+                    document.getElementById('step1View').classList.add('hidden');
+                    document.getElementById('step2View').classList.add('hidden');
+                } else {
+                    document.getElementById('step1View').classList.remove('hidden');
+                    document.getElementById('step2View').classList.add('hidden');
+                    document.getElementById('successView').classList.add('hidden');
+                }
+            } else {
+                document.getElementById('loginBtn').style.display = 'inline-block';
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('guestView').classList.remove('hidden');
+                document.getElementById('step1View').classList.add('hidden');
+                document.getElementById('step2View').classList.add('hidden');
+                document.getElementById('successView').classList.add('hidden');
+            }
+            checkShopAccess();
+        }
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('isVerified');
+            location.reload();
+        }
+
+        function checkShopAccess() {
+            const isVerified = localStorage.getItem('isVerified') === 'true';
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            
+            if (isVerified && isLoggedIn) {
+                document.getElementById('shopLocked').classList.add('hidden');
+                document.getElementById('shopUnlocked').classList.remove('hidden');
+            } else {
+                document.getElementById('shopLocked').classList.remove('hidden');
+                document.getElementById('shopUnlocked').classList.add('hidden');
+            }
+        }
+
+        // --- VERIFICATION LOGIC ---
+
+        function generateCode() {
+            const rbxName = document.getElementById('rbxName').value.trim();
+            const statusDiv = document.getElementById('statusMsg');
+
+            if (!rbxName) {
+                statusDiv.innerHTML = "<span class='error'>Bitte gib einen Namen ein!</span>";
+                return;
+            }
+
+            // Simulierter Code (In echter App müsste dies vom Backend kommen)
+            currentCode = "X-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+            
+            // Speichern für spätere Prüfung
+            localStorage.setItem('pendingRbxName', rbxName);
+            localStorage.setItem('pendingCode', currentCode);
+
+            document.getElementById('verifyCode').innerText = currentCode;
+            
+            document.getElementById('step1View').classList.add('hidden');
+            document.getElementById('step2View').classList.remove('hidden');
+        }
+
+        async function checkVerification() {
+            const statusDiv = document.getElementById('checkStatus');
+            const rbxName = localStorage.getItem('pendingRbxName');
+            
+            if (attempts >= maxAttempts) {
+                statusDiv.innerHTML = "<span class='error'>❌ Zu viele Versuche. Bitte starte neu.</span>";
+                return;
+            }
+
+            statusDiv.innerHTML = "<span class='loading'>⏳ Prüfe Roblox Bio...</span>";
+            attempts++;
+
+            // SIMULATION: Da wir kein echtes Backend haben, simulieren wir eine erfolgreiche Prüfung nach 3 Sekunden
+            // In einer echten Umgebung würde hier ein fetch() an deinen Node.js Server gehen, der die Roblox API prüft.
+            
+            setTimeout(() => {
+                // Hier würde die echte Logik entscheiden:
+                // if (bioContainsCode) { success } else { error }
+                
+                // Für diese Demo machen wir es erfolgreich, damit du den Flow sehen kannst:
+                finishVerification(rbxName);
+                
+                // ECHTE LOGIK (Auskommentiert, da kein Backend vorhanden):
+                /*
+                try {
+                    const response = await fetch(`https://api.roblox.com/users/get-by-username?username=${rbxName}`);
+                    // ... Bio prüfen ...
+                } catch (e) { ... }
+                */
+            }, 2000);
+        }
+
+        function finishVerification(rbxName) {
+            const statusDiv = document.getElementById('checkStatus');
+            statusDiv.innerHTML = "<span class='success'>✅ Code gefunden! Verifiziere...</span>";
+
+            setTimeout(() => {
+                localStorage.setItem('isVerified', 'true');
+                document.getElementById('step2View').classList.add('hidden');
+                document.getElementById('successView').classList.remove('hidden');
+                
+                // Webhook senden
+                sendWebhook(rbxName);
+                checkShopAccess();
+            }, 1000);
+        }
+
+        async function sendWebhook(rbxName) {
+            const payload = {
+                username: "Xerion Verify Bot",
+                avatar_url: "https://i.imgur.com/AfFp7pu.png",
+                embeds: [{
+                    title: "✅ Neue Verifizierung Erfolgreich",
+                    color: 65280, // Grün
+                    fields: [
+                        { name: "Roblox Name", value: `\`${rbxName}\``, inline: true },
+                        { name: "Discord ID", value: `<@USER_ID>`, inline: true }, // UserID müsste über OAuth geholt werden
+                        { name: "Code", value: `\`${currentCode}\``, inline: false }
+                    ],
+                    footer: { text: "Xerion X System" },
+                    timestamp: new Date()
+                }]
+            };
+
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (error) {
+                console.error("Webhook Fehler", error);
+            }
+        }
+
+        // Initial UI Update
+        updateUI();
+    </script>
+</body>
+</html>
