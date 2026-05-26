@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XERION X | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --red: #ff1f1f; 
+            --red-glow: rgba(255, 31, 31, 0.5);
+            --bg: #050505; 
+            --card: #111; 
+            --card-hover: #1a1a1a;
+            --text-gray: #aaa;
+            --text-muted: #666;
+            --border: #333;
+            --gradient-red: linear-gradient(135deg, #ff1f1f 0%, #cc0000 100%);
+        }
+        
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Inter', sans-serif; 
+            scroll-behavior: smooth;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--red);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fff;
+        }
+
+        body { 
+            background-color: var(--bg); 
+            color: white; 
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a0505 0%, transparent 70%),
+                radial-gradient(circle at 80% 50%, rgba(255, 31, 31, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(255, 31, 31, 0.03) 0%, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Particle Background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--red);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Custom Cursor */
+        .cursor-glow {
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 31, 31, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.3s;
+        }
+
+        /* Navigation */
+        nav { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 20px 5%;
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 31, 31, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient-red);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 0 20px var(--red-glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--red-glow); }
+            50% { box-shadow: 0 0 40px var(--red-glow), 0 0 60px var(--red-glow); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-red);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--red);
+            color: var(--red);
+        }
+
+        .btn-outline:hover {
+            background: var(--red);
+            color: white;
+            box-shadow: 0 0 30px var(--red-glow);
+        }
+
+        .btn-primary {
+            background: var(--gradient-red);
+            color: white;
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px var(--red-glow), 0 0 60px var(--red-glow);
+        }
+
+        .btn-discord {
+            background: #5865F2;
+            color: white;
+            box-shadow: 0 0 20px rgba(88, 101, 242, 0.5);
+        }
+
+        .btn-discord:hover {
+            background: #4752C4;
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(88, 101, 242, 0.7);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 5% 80px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 50px var(--red-glow);
+            animation: glowText 3s infinite;
+        }
+
+        @keyframes glowText {
+            0%, 100% { text-shadow: 0 0 50px var(--red-glow); }
+            50% { text-shadow: 0 0 80px var(--red-glow), 0 0 100px var(--red-glow); }
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-gray);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Stats Section */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            padding: 60px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .stat-number {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, #fff 0%, var(--red) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-red);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 31, 31, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--red);
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: white;
+        }
+
+        .feature-card p {
+            color: var(--text-gray);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Marketplace Section */
+        .marketplace {
+            padding: 80px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .marketplace-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(255, 31, 31, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .search-bar input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-gray);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: rgba(17, 17, 17, 0.6);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 8px;
+            color: var(--text-gray);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .filter-tab:hover,
+        .filter-tab.active {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image i {
+            font-size: 60px;
+            color: var(--red);
+            opacity: 0.5;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--gradient-red);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .product-creator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        .product-creator img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #FFD700;
+            font-size: 13px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        .btn-buy {
+            padding: 8px 20px;
+            background: var(--gradient-red);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+        }
+
+        .btn-buy:hover {
+            box-shadow: 0 0 20px var(--red-glow);
+            transform: scale(1.05);
+        }
+
+        /* Games Section */
+        .games {
+            padding: 80px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .game-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .game-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .game-thumbnail i {
+            font-size: 70px;
+            color: var(--red);
+            opacity: 0.3;
+        }
+
+        .game-stats {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .game-stat {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-info {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .game-description {
+            color: var(--text-gray);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .game-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-play {
+            flex: 1;
+            padding: 10px;
+            background: var(--gradient-red);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .btn-play:hover {
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .btn-details {
+            padding: 10px 15px;
+            background: rgba(255, 31, 31, 0.1);
+            border: 1px solid var(--red);
+            border-radius: 6px;
+            color: var(--red);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 13px;
+        }
+
+        .btn-details:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 80px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        .testimonial-card:hover {
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .testimonial-user h4 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .testimonial-user p {
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        .testimonial-stars {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+
+        .testimonial-text {
+            color: var(--text-gray);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 31, 31, 0.2);
+            padding: 60px 5% 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--red);
+            padding-left: 5px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 31, 31, 0.1);
+            border: 1px solid rgba(255, 31, 31, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            transition: all 0.3s;
+        }
+
+        .footer-social a:hover {
+            background: var(--red);
+            color: white;
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 31, 31, 0.1);
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: rgba(17, 17, 17, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 300px;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .toast.success {
+            border-color: #10B981;
+        }
+
+        .toast.success i {
+            color: #10B981;
+        }
+
+        .toast.error {
+            border-color: var(--red);
+        }
+
+        .toast.error i {
+            color: var(--red);
+        }
+
+        .toast.info {
+            border-color: #3B82F6;
+        }
+
+        .toast.info i {
+            color: #3B82F6;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 31, 31, 0.3);
+            border-top-color: var(--red);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .features-grid,
+            .products-grid,
+            .games-grid,
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dashboard Specific Styles */
+        .dashboard-container {
+            display: none;
+            padding: 100px 5% 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dashboard-container.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gradient-red);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .user-info h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .verified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .dashboard-sidebar {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            height: fit-content;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 18px;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 15px;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: rgba(255, 31, 31, 0.1);
+            color: var(--red);
+        }
+
+        .sidebar-menu a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .dashboard-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .dashboard-card {
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--red);
+            box-shadow: 0 10px 40px var(--red-glow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-header h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-icon {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 31, 31, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            font-size: 20px;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 31, 31, 0.1);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 31, 31, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .activity-info p {
+            color: var(--text-gray);
+            font-size: 13px;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Verification Section */
+        .verification-section {
+            display: none;
+            padding: 100px 5% 60px;
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .verification-section.active {
+            display: block;
+        }
+
+        .verification-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(17, 17, 17, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 31, 31, 0.2);
+            border-radius: 16px;
+            padding: 50px;
+        }
+
+        .verification-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            background: rgba(255, 31, 31, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: var(--red);
+        }
+
+        .verification-card h2 {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .verification-card p {
+            color: var(--text-gray);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .verification-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+            text-transform: uppercase;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(17, 17, 17, 0.8);
+            border: 1px solid rgba(255, 31, 31, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--red);
+            box-shadow: 0 0 20px var(--red-glow);
+        }
+
+        .verification-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 31, 31, 0.1);
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 31, 31, 0.1);
+            border: 2px solid rgba(255, 31, 31, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        .step.active .step-number {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+        }
+
+        .step-label {
+            font-size: 13px;
+            color: var(--text-gray);
+            text-align: center;
+        }
+
+        .step.active .step-label {
+            color: white;
+        }
+
+        .code-display {
+            background: rgba(255, 31, 31, 0.1);
+            border: 2px dashed var(--red);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .code-display .code {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--red);
+            letter-spacing: 5px;
+            text-align: center;
+        }
+
+        .code-display p {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="#" class="logo" onclick="showSection('home'); return false;">
+            <div class="logo-icon"><i class="fas fa-xmark"></i></div>
+            XERION X
+        </a>
+        <ul class="nav-links">
+            <li><a href="#features" onclick="showSection('home')">Features</a></li>
+            <li><a href="#marketplace" onclick="showSection('home')">Marketplace</a></li>
+            <li><a href="#games" onclick="showSection('home')">Games</a></li>
+            <li><a href="#" onclick="showSection('dashboard'); return false;">Dashboard</a></li>
+        </ul>
+        <div class="nav-buttons" id="navButtons">
+            <button class="btn btn-outline" onclick="scrollToSection('marketplace')">Marketplace</button>
+            <a href="https://discord.com/oauth2/authorize?client_id=1507855664410529792&response_type=code&redirect_uri=https%3A%2F%2Fxerionx.kiblox.at%2FRoblox%2Fdashboard.html&scope=identify+email" class="btn btn-discord">
+                <i class="fab fa-discord"></i> Login with Discord
+            </a>
+        </div>
+        <div class="nav-buttons hidden" id="userNavButtons">
+            <span id="userDisplayName" style="color: var(--text-gray); margin-right: 10px;"></span>
+            <button class="btn btn-outline" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="homeSection">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>XERION X</h1>
+            <p>Die ultimative Roblox Developer Plattform. Erstelle, verifiziere und monetarisiere deine Spiele mit professionellen Tools und einer aktiven Creator-Community.</p>
+            <div class="hero-buttons">
+                <a href="https://discord.com/oauth2/authorize?client_id=1507855664410529792&response_type=code&redirect_uri=https%3A%2F%2Fxerionx.kiblox.at%2FRoblox%2Fdashboard.html&scope=identify+email" class="btn btn-discord">
+                    <i class="fab fa-discord"></i> Login with Discord
+                </a>
+                <button class="btn btn-primary" onclick="scrollToSection('marketplace')">
+                    <i class="fas fa-shopping-cart"></i> Marketplace
+                </button>
+                <button class="btn btn-outline" onclick="scrollToSection('features')">
+                    <i class="fas fa-info-circle"></i> Features
+                </button>
+            </div>
+        </section>
+
+        <!-- Stats -->
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="statUsers">0</div>
+                <div class="stat-label">Verified Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statOnline">0</div>
+                <div class="stat-label">Online Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statProducts">0</div>
+                <div class="stat-label">Products Sold</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="statGames">0</div>
+                <div class="stat-label">Connected Games</div>
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features" id="features">
+            <h2 class="section-title">Platform Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                    <h3>Roblox Verification</h3>
+                    <p>Verifiziere deinen Roblox Account sicher und schnell. Erhalte exklusive Badges und Zugriff auf Premium-Features.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-store"></i></div>
+                    <h3>Roblox Marketplace</h3>
+                    <p>Kaufe und verkaufe hochwertige Scripts, UI Packs, Models und Assets von vertrauenswürdigen Creators.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                    <h3>Roblox UI Packs</h3>
+                    <p>Professionelle ScreenGUI Systeme, Anime UI, Combat HUDs und komplette Interface-Lösungen.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fab fa-discord"></i></div>
+                    <h3>Discord Sync</h3>
+                    <p>Synchronisiere deinen Discord Account automatisch. Erhalte Rollen und Zugriff auf exklusive Channels.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Analytics System</h3>
+                    <p>Detaillierte Statistiken zu deinen Spielen, Verkäufen und Downloads. Optimiere deine Performance.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="fas fa-crown"></i></div>
+                    <h3>Premium Features</h3>
+                    <p>Exklusive Tools, früher Zugang zu neuen Produkten und erweiterte Upload-Limits für Premium-Mitglieder.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Marketplace -->
+        <section class="marketplace" id="marketplace">
+            <div class="marketplace-header">
+                <h2 class="section-title" style="margin-bottom: 0;">Marketplace</h2>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search products..." id="productSearch">
+                </div>
+                <div class="filter-tabs">
+                    <div class="filter-tab active" data-filter="all">All</div>
+                    <div class="filter-tab" data-filter="ui">UI Packs</div>
+                    <div class="filter-tab" data-filter="scripts">Scripts</div>
+                    <div class="filter-tab" data-filter="models">Models</div>
+                    <div class="filter-tab" data-filter="plugins">Plugins</div>
+                </div>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Games -->
+        <section class="games" id="games">
+            <h2 class="section-title">Featured Games</h2>
+            <div class="games-grid" id="gamesGrid">
+                <!-- Games will be loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <h2 class="section-title">Community Reviews</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">JD</div>
+                        <div class="testimonial-user">
+                            <h4>JohnDev</h4>
+                            <p>Roblox Creator</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"XERION X hat meine Entwicklung komplett verändert. Die UI Packs sind erstklassig und der Support ist fantastisch!"</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">SK</div>
+                        <div class="testimonial-user">
+                            <h4>ScriptKing</h4>
+                            <p>Premium Seller</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Als Seller verdiene ich hier monatlich über 50.000 Robux. Die Plattform ist professionell und zuverlässig."</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-header">
+                        <div class="testimonial-avatar">AG</div>
+                        <div class="testimonial-user">
+                            <h4>AnimeGamer</h4>
+                            <p>Game Owner</p>
+                        </div>
+                    </div>
+                    <div class="testimonial-stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <p class="testimonial-text">"Die Anime UI Packs haben mein Spiel auf das nächste Level gebracht. Meine Spieler lieben das neue Design!"</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Verification Section -->
+    <section class="verification-section" id="verificationSection">
+        <div class="verification-card">
+            <div class="verification-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h2>Roblox Verification</h2>
+            <p>Verifiziere deinen Roblox Account um Zugriff auf alle Features zu erhalten. Dies ist ein einmaliger Prozess.</p>
+            
+            <div class="verification-form" id="verificationForm">
+                <div class="form-group">
+                    <label>Roblox Username</label>
+                    <input type="text" id="robloxUsername" placeholder="Enter your Roblox username">
+                </div>
+                <button class="btn btn-primary" onclick="startVerification()" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Start Verification
+                </button>
+            </div>
+
+            <div class="verification-form hidden" id="verificationCodeStep">
+                <p>Setze diesen Code in deine Roblox Bio:</p>
+                <div class="code-display">
+                    <div class="code" id="verificationCode">XERION-XXXX</div>
+                    <p>Kopiere den Code und füge ihn in deine Roblox Profil-Bio ein</p>
+                </div>
+                <button class="btn btn-primary" onclick="verifyCode()" style="width: 100%;">
+                    <i class="fas fa-check"></i> I've Added The Code
+                </button>
+            </div>
+
+            <div class="verification-form hidden" id="verificationSuccess">
+                <div class="verification-icon" style="background: rgba(16, 185, 129, 0.1); color: #10B981;">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2 style="color: #10B981;">Verification Successful!</h2>
+                <p>Dein Account wurde erfolgreich verifiziert. Du hast jetzt Zugriff auf alle Features.</p>
+                <button class="btn btn-primary" onclick="goToDashboard()" style="width: 100%;">
+                    <i class="fas fa-tachometer-alt"></i> Go to Dashboard
+                </button>
+            </div>
+
+            <div class="verification-steps">
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Enter Username</div>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Add Code to Bio</div>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Get Verified</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section class="dashboard-container" id="dashboardSection">
+        <div class="dashboard-header">
+            <div class="user-profile">
+                <div class="user-avatar" id="dashboardAvatar">U</div>
+                <div class="user-info">
+                    <h2 id="dashboardUsername">Loading...</h2>
+                    <p id="dashboardEmail">Please wait...</p>
+                    <div class="verified-badge" id="verifiedBadge" style="display: none;">
+                        <i class="fas fa-check-circle"></i> Verified
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-outline" onclick="showSection('home')">
+                    <i class="fas fa-home"></i> Home
+                </button>
+                <button class="btn btn-primary" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <aside class="dashboard-sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a href="#"><i class="fas fa-gamepad"></i> My Games</a></li>
+                    <li><a href="#"><i class="fas fa-shopping-bag"></i> Purchases</a></li>
+                    <li><a href="#"><i class="fas fa-upload"></i> Uploads</a></li>
+                    <li><a href="#"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                    <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </aside>
+
+            <div class="dashboard-content">
+                <div class="stats-row">
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Total Purchases</h3>
+                            <div class="card-icon"><i class="fas fa-shopping-cart"></i></div>
+                        </div>
+                        <div class="stat-number" style="font-size: 32px;">0</div>
+                        <p style="color: var(--text-gray); font-size: 14px;">Items purchased</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Robux Spent</h3>
+                            <div class="card-icon"><i class="fas fa-coins"></i></div>
+                        </div>
+                        <div class="stat-number" style="font-size: 32px;">0</div>
+                        <p style="color: var(--text-gray); font-size: 14px;">Total spent</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Downloads</h3>
+                            <div class="card-icon"><i class="fas fa-download"></i></div>
+                        </div>
+                        <div class="stat-number" style="font-size: 32px;">0</div>
+                        <p style="color: var(--text-gray); font-size: 14px;">Assets downloaded</p>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>Connected Games</h3>
+                            <div class="card-icon"><i class="fas fa-link"></i></div>
+                        </div>
+                        <div class="stat-number" style="font-size: 32px;">0</div>
+                        <p style="color: var(--text-gray); font-size: 14px;">Games linked</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <div class="card-icon"><i class="fas fa-history"></i></div>
+                    </div>
+                    <ul class="activity-list" id="activityList">
+                        <li class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+                            <div class="activity-info">
+                                <h4>Account Created</h4>
+                                <p>Welcome to XERION X!</p>
+                            </div>
+                            <div class="activity-time">Just now</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                        <div class="card-icon"><i class="fas fa-bolt"></i></div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <button class="btn btn-primary" onclick="scrollToSection('marketplace')">
+                            <i class="fas fa-store"></i> Browse Marketplace
+                        </button>
+                        <button class="btn btn-outline" onclick="showSection('verification')">
+                            <i class="fas fa-shield-alt"></i> Verify Roblox
+                        </button>
+                        <button class="btn btn-outline" onclick="scrollToSection('games')">
+                            <i class="fas fa-gamepad"></i> View Games
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>XERION X</h3>
+                <p style="color: var(--text-gray); font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
+                    Die professionelle Roblox Developer Plattform für Creator, Entwickler und Gamer.
+                </p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Platform</h3>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#marketplace">Marketplace</a></li>
+                    <li><a href="#games">Games</a></li>
+                    <li><a href="#" onclick="showSection('dashboard')">Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 XERION X. All rights reserved. Not affiliated with Roblox Corporation.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            discordClientId: '1507855664410529792',
+            redirectUri: 'https://xerionx.kiblox.at/Roblox/dashboard.html',
+            apiBaseUrl: '' // No backend needed for static version
+        };
+
+        // Sample Data
+        const products = [
+            { id: 1, title: 'Anime Combat UI Pack', creator: 'UIDesigner', price: 500, rating: 4.9, reviews: 234, category: 'ui', badge: 'Bestseller' },
+            { id: 2, title: 'Advanced Admin System', creator: 'ScriptPro', price: 800, rating: 4.8, reviews: 189, category: 'scripts', badge: 'Popular' },
+            { id: 3, title: 'Sci-Fi Weapon Models', creator: 'ModelMaster', price: 350, rating: 4.7, reviews: 156, category: 'models', badge: null },
+            { id: 4, title: 'RPG Inventory System', creator: 'GameDevStudio', price: 600, rating: 4.9, reviews: 312, category: 'scripts', badge: 'Featured' },
+            { id: 5, title: 'Cyberpunk HUD', creator: 'FutureUI', price: 450, rating: 4.6, reviews: 98, category: 'ui', badge: null },
+            { id: 6, title: 'Building Tools Plugin', creator: 'BuilderPro', price: 250, rating: 4.5, reviews: 445, category: 'plugins', badge: 'Free' },
+            { id: 7, title: 'Fantasy Character Pack', creator: 'Artisan3D', price: 700, rating: 4.8, reviews: 267, category: 'models', badge: 'New' },
+            { id: 8, title: 'Simulator Framework', creator: 'SimulatorKing', price: 900, rating: 4.9, reviews: 521, category: 'scripts', badge: 'Bestseller' }
+        ];
+
+        const games = [
+            { id: 1, title: 'Ninja Legends Remastered', description: 'Become the ultimate ninja master', visits: '2.5M', likes: '94%', players: '12.5K' },
+            { id: 2, title: 'City Roleplay', description: 'Live your dream life in the city', visits: '1.8M', likes: '91%', players: '8.2K' },
+            { id: 3, title: 'Tower Defense Simulator', description: 'Defend against waves of enemies', visits: '3.2M', likes: '96%', players: '15.3K' },
+            { id: 4, title: 'Anime Fighting Simulator', description: 'Train and fight in anime worlds', visits: '4.1M', likes: '93%', players: '18.7K' }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initParticles();
+            initCursor();
+            loadProducts();
+            loadGames();
+            animateStats();
+            checkAuth();
+            setupFilters();
+        });
+
+        // Particle System
+        function initParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Custom Cursor
+        function initCursor() {
+            const cursor = document.getElementById('cursorGlow');
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+        }
+
+        // Toast Notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            
+            toast.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Load Products
+        function loadProducts(filter = 'all') {
+            const grid = document.getElementById('productsGrid');
+            const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+            
+            grid.innerHTML = filtered.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                        ${product.badge ? `<span class="product-badge">${product.badge}</span>` : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">${product.title}</h3>
+                        <div class="product-meta">
+                            <div class="product-creator">
+                                <div style="width: 24px; height: 24px; background: var(--red); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">${product.creator[0]}</div>
+                                <span>${product.creator}</span>
+                            </div>
+                            <div class="product-rating">
+                                <i class="fas fa-star"></i>
+                                <span>${product.rating} (${product.reviews})</span>
+                            </div>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-price">${product.price} R$</span>
+                            <button class="btn-buy" onclick="buyProduct(${product.id})">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load Games
+        function loadGames() {
+            const grid = document.getElementById('gamesGrid');
+            grid.innerHTML = games.map(game => `
+                <div class="game-card">
+                    <div class="game-thumbnail">
+                        <i class="fas fa-gamepad"></i>
+                        <div class="game-stats">
+                            <div class="game-stat"><i class="fas fa-eye"></i> ${game.visits}</div>
+                            <div class="game-stat"><i class="fas fa-thumbs-up"></i> ${game.likes}</div>
+                            <div class="game-stat"><i class="fas fa-users"></i> ${game.players}</div>
+                        </div>
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">${game.title}</h3>
+                        <p class="game-description">${game.description}</p>
+                        <div class="game-actions">
+                            <button class="btn-play"><i class="fas fa-play"></i> Play Now</button>
+                            <button class="btn-details"><i class="fas fa-info-circle"></i></button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter Tabs
+        function setupFilters() {
+            const tabs = document.querySelectorAll('.filter-tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    loadProducts(tab.dataset.filter);
+                });
+            });
+        }
+
+        // Search
+        document.getElementById('productSearch').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.creator.toLowerCase().includes(query)
+            );
+            
+            const grid = document.getElementById('productsGrid');
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-gray);">No products found</div>';
+            } else {
+                // Re-render with filtered results (simplified)
+                loadProducts('all');
+            }
+        });
+
+        // Buy Product
+        function buyProduct(id) {
+            const user = localStorage.getItem('xerion_user');
+            if (!user) {
+                showToast('Please login to purchase items', 'error');
+                return;
+            }
+            showToast('Purchase successful! Item added to inventory', 'success');
+        }
+
+        // Animate Stats
+        function animateStats() {
+            const targets = {
+                statUsers: 15000,
+                statOnline: 2500,
+                statProducts: 50000,
+                statGames: 850
+            };
+
+            Object.keys(targets).forEach(id => {
+                const el = document.getElementById(id);
+                const target = targets[id];
+                let current = 0;
+                const increment = target / 50;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    el.textContent = formatNumber(Math.floor(current));
+                }, 30);
+            });
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        // Scroll to Section
+        function scrollToSection(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Show Section
+        function showSection(section) {
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('verificationSection').classList.remove('active');
+            document.getElementById('dashboardSection').classList.remove('active');
+            
+            if (section === 'home') {
+                document.getElementById('homeSection').style.display = 'block';
+            } else if (section === 'verification') {
+                document.getElementById('verificationSection').classList.add('active');
+            } else if (section === 'dashboard') {
+                const user = localStorage.getItem('xerion_user');
+                if (user) {
+                    document.getElementById('dashboardSection').classList.add('active');
+                    loadUserData(JSON.parse(user));
+                } else {
+                    showToast('Please login first', 'error');
+                    document.getElementById('homeSection').style.display = 'block';
+                }
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        // Check Authentication
+        function checkAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            
+            if (code) {
+                // Simulate OAuth flow - in production this would call your backend
+                simulateOAuth(code);
+                // Clear the URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Check for existing session
+            const user = localStorage.getItem('xerion_user');
+            if (user) {
+                updateNavForLoggedInUser(JSON.parse(user));
+            }
+        }
+
+        // Simulate OAuth (since we don't have a backend)
+        function simulateOAuth(code) {
+            // In production, you would exchange this code for tokens via your backend
+            // For now, we'll create a mock user session
+            const mockUser = {
+                id: 'mock_' + Date.now(),
+                username: 'DiscordUser#' + Math.floor(Math.random() * 1000),
+                email: 'user@example.com',
+                avatar: null,
+                verified: false,
+                joinDate: new Date().toISOString()
+            };
+            
+            localStorage.setItem('xerion_user', JSON.stringify(mockUser));
+            updateNavForLoggedInUser(mockUser);
+            showToast('Successfully logged in!', 'success');
+            
+            // Redirect to verification
+            setTimeout(() => {
+                showSection('verification');
+            }, 1000);
+        }
+
+        // Update Navigation for Logged In User
+        function updateNavForLoggedInUser(user) {
+            document.getElementById('navButtons').classList.add('hidden');
+            document.getElementById('userNavButtons').classList.remove('hidden');
+            document.getElementById('userDisplayName').textContent = user.username;
+        }
+
+        // Load User Data in Dashboard
+        function loadUserData(user) {
+            document.getElementById('dashboardUsername').textContent = user.username;
+            document.getElementById('dashboardEmail').textContent = user.email || 'Discord User';
+            document.getElementById('dashboardAvatar').textContent = user.username[0].toUpperCase();
+            
+            if (user.verified) {
+                document.getElementById('verifiedBadge').style.display = 'inline-flex';
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.removeItem('xerion_user');
+            document.getElementById('navButtons').classList.remove('hidden');
+            document.getElementById('userNavButtons').classList.add('hidden');
+            showSection('home');
+            showToast('Successfully logged out', 'info');
+        }
+
+        // Verification System
+        let currentVerificationCode = null;
+
+        function startVerification() {
+            const username = document.getElementById('robloxUsername').value.trim();
+            
+            if (!username) {
+                showToast('Please enter your Roblox username', 'error');
+                return;
+            }
+            
+            // Generate verification code
+            currentVerificationCode = 'XERION-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('verificationCode').textContent = currentVerificationCode;
+            
+            // Show code step
+            document.getElementById('verificationForm').classList.add('hidden');
+            document.getElementById('verificationCodeStep').classList.remove('hidden');
+            
+            // Update steps
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            
+            showToast('Code generated! Add it to your Roblox bio.', 'info');
+        }
+
+        function verifyCode() {
+            // Simulate verification check
+            // In production, this would call the Roblox API to check the user's bio
+            
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+            
+            // Simulate API delay
+            setTimeout(() => {
+                document.getElementById('verificationCodeStep').classList.add('hidden');
+                document.getElementById('verificationSuccess').classList.remove('hidden');
+                
+                // Update user as verified
+                const user = JSON.parse(localStorage.getItem('xerion_user'));
+                if (user) {
+                    user.verified = true;
+                    localStorage.setItem('xerion_user', JSON.stringify(user));
+                    document.getElementById('verifiedBadge').style.display = 'inline-flex';
+                }
+                
+                showToast('Verification successful!', 'success');
+            }, 1500);
+        }
+
+        function goToDashboard() {
+            showSection('dashboard');
+        }
+    </script>
+</body>
+</html>
